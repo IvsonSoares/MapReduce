@@ -41,9 +41,9 @@ public class AvgCommodityYear {
         j.setCombinerClass(CombineForAverage.class);
 
         // definicao dos tipos de saida
-        j.setMapOutputKeyClass(CommodityYearWritable.class); //tipo da chave de saida do map
+        j.setMapOutputKeyClass(Text.class); //tipo da chave de saida do map
         j.setMapOutputValueClass(AvgCommodityWritable.class); // tipo do valor de saida do map
-        j.setOutputKeyClass(CommodityYearWritable.class); // tipo da chave de saida do reduce
+        j.setOutputKeyClass(Text.class); // tipo da chave de saida do reduce
         j.setOutputValueClass(FloatWritable.class); //tipo do valor de saida do reduce
 
         // cadastro dos arquivos de entrada e saida
@@ -58,7 +58,7 @@ public class AvgCommodityYear {
     }
 
 
-    public static class MapForAverage extends Mapper<LongWritable, Text, CommodityYearWritable, AvgCommodityWritable> {
+    public static class MapForAverage extends Mapper<LongWritable, Text, Text, AvgCommodityWritable> {
         public void map(LongWritable key, Text value, Context con)
                 throws IOException, InterruptedException {
 
@@ -72,18 +72,18 @@ public class AvgCommodityYear {
             float quantidade = Float.parseFloat(colunas[5]);
 
             AvgCommodityWritable val = new AvgCommodityWritable(quantidade, 1);
-            CommodityYearWritable chave = new CommodityYearWritable(commodity, year);
+            //CommodityYearWritable chave = new CommodityYearWritable(commodity, year);
 
             //MEEDIA PER YEAR
-            con.write(chave, val);
+            con.write(new Text(year), val);
 
             }
 
         }
     }
 
-    public static class CombineForAverage extends Reducer<CommodityYearWritable, AvgCommodityWritable, CommodityYearWritable, AvgCommodityWritable> {
-        public void reduce(CommodityYearWritable key, Iterable<AvgCommodityWritable> values, Context con)
+    public static class CombineForAverage extends Reducer<Text, AvgCommodityWritable, Text, AvgCommodityWritable> {
+        public void reduce(Text key, Iterable<AvgCommodityWritable> values, Context con)
                 throws IOException, InterruptedException {
             //reduce opera por chave
 
@@ -104,8 +104,8 @@ public class AvgCommodityYear {
     }
 
 
-    public static class ReduceForAverage extends Reducer<CommodityYearWritable, AvgCommodityWritable, CommodityYearWritable, DoubleWritable> {
-        public void reduce(CommodityYearWritable key, Iterable<AvgCommodityWritable> values, Context con)
+    public static class ReduceForAverage extends Reducer<Text, AvgCommodityWritable, Text, DoubleWritable> {
+        public void reduce(Text key, Iterable<AvgCommodityWritable> values, Context con)
                 throws IOException, InterruptedException {
 
             double somaYears = 0;
