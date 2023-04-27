@@ -1,4 +1,4 @@
-package TDE.easy.one;
+package tde_grupo.easy.one;
 
 import java.io.IOException;
 import java.util.Objects;

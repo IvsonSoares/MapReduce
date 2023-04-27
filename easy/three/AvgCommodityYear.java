@@ -1,4 +1,4 @@
-package TDE.easy.three;
+package tde_grupo.easy.three;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -61,7 +61,7 @@ public class AvgCommodityYear {
     public static class MapForAverage extends Mapper<LongWritable, Text, CommodityYearWritable, AvgCommodityWritable> {
             /* Recebe valor e transforma para string, separa os valores por ";" utilizando split colocando-os em
             um array, inicializa a variável n. O if verifica se é o cabeçalho (ignora primeira linha), coleta
-            os years, as commodities, e os trades. Cria um objeto de commodities por ano, insere trade em
+            os years e os trades. Cria um objeto de commodities por ano, insere trade em
             AvgWritable juntamente com n (1). E depois, será calculada a média de valores de commodity/ano */
 
         public void map(LongWritable key, Text value, Context con)
@@ -88,7 +88,7 @@ public class AvgCommodityYear {
     }
 
     public static class CombineForAverage extends Reducer<CommodityYearWritable, AvgCommodityWritable, CommodityYearWritable, AvgCommodityWritable> {
-        /* Junta os valores de AvgCommodityWritable para passar à o reduce */
+        /* Junta os valores de AvgCommodityWritable e CommodityYearWritable para passar à o reduce */
         public void reduce(CommodityYearWritable key, Iterable<AvgCommodityWritable> values, Context con)
                 throws IOException, InterruptedException {
             

@@ -1,4 +1,4 @@
-package TDE.hard.six;
+package tde_grupo.hard.six;
 
 import advanced.entropy.BaseQtdWritable;
 import org.apache.hadoop.conf.Configuration;
@@ -90,6 +90,13 @@ public class LargestAvgCommodityPrice {
 
 
     public static class MapForAverageA extends Mapper<LongWritable, Text, Text, AvgCommodityPriceWritable> {
+
+        /**
+         *  Recebe valor e transforma para string, separa os valores por ";" utilizando split colocando-os em
+            um array, inicializa a variável n. O if verifica se é o cabeçalho (ignora primeira linha), coleta
+           os country_or_area. flow, flow_filter e price. Cria dois objetos de AvgTransactionWritable e 
+           TypeYearWritable e o escreve o preço no objeto AvgCommodityPriceWritable se ele for de flow export.
+         */
         public void map(LongWritable key, Text value, Context con)
                 throws IOException, InterruptedException {
 
@@ -115,6 +122,11 @@ public class LargestAvgCommodityPrice {
     }
 
     public static class CombineForAverageA extends Reducer<Text, AvgCommodityPriceWritable, Text, AvgCommodityPriceWritable> {
+        /**
+         * Como todo combiner de média, ele vai contabilizar o total do número que buscamos a média 
+         * e a quantidade total de ocorrências.
+         * 
+         */
         public void reduce(Text key, Iterable<AvgCommodityPriceWritable> values, Context con)
                 throws IOException, InterruptedException {
             //reduce opera por chave
@@ -135,6 +147,10 @@ public class LargestAvgCommodityPrice {
 
 
     public static class ReduceForAverageA extends Reducer<Text, AvgCommodityPriceWritable, Text, DoubleWritable> {
+        /**
+         * Mesmo processo para realizar a média no reduce, contabilizará os preços e as quantidades
+         *  para retornar a divisão de ambos, ou seja, a média.
+         */
         public void reduce(Text key, Iterable<AvgCommodityPriceWritable> values, Context con)
                 throws IOException, InterruptedException {
 
@@ -153,6 +169,10 @@ public class LargestAvgCommodityPrice {
     }
 
     public static class MapForAverageB extends Mapper<LongWritable, Text, Text, CountryQtdWritable> {
+        /**
+         * Após obtermos as médias de todos, temos que mapear os dados já pré processados pelo reduce anterior;
+         * Dessa forma, iremos dar split por \t, ou tab, pois é a forma que o reduce dividiu nossos dados.
+         */
         public void map(LongWritable key, Text value, Context con)
                 throws IOException, InterruptedException {
 
@@ -170,11 +190,18 @@ public class LargestAvgCommodityPrice {
     }
 
     public static class CombineForAverageB extends Reducer<Text, CountryQtdWritable, Text, CountryQtdWritable> {
+        /**
+         * Neste combiner, estaremos buscando o maior valor do map local, reduzindo o output do mesmo significativamente.
+         * Já que cada Map antes do sort/shuffle retornará somente uma chave valor, invés de uma lista.
+         * 
+         * Para isso, definimos a variável max como double negative infinity, pois é o menor valor possível e quaisquer
+         * valores serão maiores do que o mesmo. Dessa forma, iteramos no array e então, obtemos o país com a maior média.
+         */
         public void reduce(Text key, Iterable<CountryQtdWritable> values, Context con)
                 throws IOException, InterruptedException {
             //reduce opera por chave
 
-            double max = 0;
+            double max = Double.NEGATIVE_INFINITY;
             String country = "";
 
             for (CountryQtdWritable t: values) {
@@ -191,10 +218,13 @@ public class LargestAvgCommodityPrice {
 
 
     public static class ReduceForAverageB extends Reducer<Text, CountryQtdWritable, Text, DoubleWritable> {
+        /**
+         * Por fim, no reduce, fazemos o último filtro para retornarmos o país com a maior média.
+         */
         public void reduce(Text key, Iterable<CountryQtdWritable> values, Context con)
                 throws IOException, InterruptedException {
 
-            double max = 0;
+            double max = Double.NEGATIVE_INFINITY;
             String country = "";
 
             for (CountryQtdWritable t: values) {

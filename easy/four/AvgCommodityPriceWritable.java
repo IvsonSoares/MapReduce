@@ -1,6 +1,6 @@
-package TDE.easy.four;
+package tde_grupo.easy.four;
 
-import TDE.easy.three.AvgCommodityWritable;
+import tde_grupo.easy.three.AvgCommodityWritable;
 import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;

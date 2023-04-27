@@ -1,6 +1,6 @@
-package TDE.medium.five;
+package tde_grupo.medium.five;
 
-import TDE.easy.four.AvgCommodityUnitYearCategWritable;
+import tde_grupo.easy.four.AvgCommodityUnitYearCategWritable;
 import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;
@@ -69,9 +69,8 @@ public class TypeYearWritable implements WritableComparable<TypeYearWritable> {
 
     @Override
     public String toString() {
-        return "TypeYearWritable{" +
-                "type='" + type + '\'' +
-                ", year='" + year + '\'' +
-                '}';
+        return
+                "type=" + type +
+                ", year='" + year;
     }
 }

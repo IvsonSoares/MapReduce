@@ -1,4 +1,4 @@
-package TDE.easy.two;
+package tde_grupo.easy.two;
 
 import advanced.customwritable.ForestFireWritable;
 import org.apache.hadoop.io.WritableComparable;

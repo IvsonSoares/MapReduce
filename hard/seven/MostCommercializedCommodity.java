@@ -1,7 +1,7 @@
-package TDE.hard.seven;
+package tde_grupo.hard.seven;
 
-import TDE.hard.six.AvgCommodityPriceWritable;
-import TDE.hard.six.CountryQtdWritable;
+import tde_grupo.hard.six.AvgCommodityPriceWritable;
+import tde_grupo.hard.six.CountryQtdWritable;
 import advanced.entropy.BaseQtdWritable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -43,9 +43,9 @@ public class MostCommercializedCommodity {
 
         //registro de classes
         j_1.setJarByClass(MostCommercializedCommodity.class);
-        j_1.setMapperClass(MostCommercializedCommodity.MapForAverageA.class);
-        j_1.setReducerClass(MostCommercializedCommodity.ReduceForAverageA.class);
-        j_1.setCombinerClass(MostCommercializedCommodity.CombineForAverageA.class);
+        j_1.setMapperClass(MapForAverageA.class);
+        j_1.setReducerClass(ReduceForAverageA.class);
+        j_1.setCombinerClass(ReduceForAverageA.class);
 
         // definicao dos tipos de saida
         j_1.setMapOutputKeyClass(CommodityFlowWritable.class); //tipo da chave de saida do map
@@ -68,9 +68,9 @@ public class MostCommercializedCommodity {
 
         //registro de classes
         j_2.setJarByClass(MostCommercializedCommodity.class);
-        j_2.setMapperClass(MostCommercializedCommodity.MapForAverageB.class);
-        j_2.setReducerClass(MostCommercializedCommodity.ReduceForAverageB.class);
-        j_2.setCombinerClass(MostCommercializedCommodity.CombineForAverageB.class);
+        j_2.setMapperClass(MapForAverageB.class);
+        j_2.setReducerClass(ReduceForAverageB.class);
+        j_2.setCombinerClass(CombineForAverageB.class);
 
         // definicao dos tipos de saida
         j_2.setMapOutputKeyClass(Text.class); //tipo da chave de saida do map
@@ -90,6 +90,10 @@ public class MostCommercializedCommodity {
 
 
     public static class MapForAverageA extends Mapper<LongWritable, Text, CommodityFlowWritable, QuantityCommodityWritable> {
+        /*
+        *separa linha por coluna através dos ';'
+        *
+        * */
         public void map(LongWritable key, Text value, Context con)
                 throws IOException, InterruptedException {
 
@@ -99,6 +103,7 @@ public class MostCommercializedCommodity {
                 String colunas[] = linha.split(";");
 
                 //obter commodities
+                // Acredito que esteja clean e fácil de compreender
                 String year       = colunas[1];
                 String year_filer = "2016";
                 String commodity  = colunas[3];
@@ -119,26 +124,12 @@ public class MostCommercializedCommodity {
         }
     }
 
-    public static class CombineForAverageA extends Reducer<CommodityFlowWritable, DoubleWritable, Text, DoubleWritable> {
-        public void reduce(Text key, Iterable<DoubleWritable> values, Context con)
-                throws IOException, InterruptedException {
-            //reduce opera por chave
-
-            int somaComodities = 0;
-
-
-            for(DoubleWritable v: values){
-                somaComodities += v.get();
-            }
-
-            //salvando resultado chave = unica, valor = media
-            con.write(key, new DoubleWritable(somaComodities));
-
-        }
-    }
 
 
     public static class ReduceForAverageA extends Reducer<CommodityFlowWritable, QuantityCommodityWritable, CommodityFlowWritable, DoubleWritable> {
+        /*
+        * Primeiro reduce para contabilizar ;
+        * */
         public void reduce(CommodityFlowWritable key, Iterable<QuantityCommodityWritable> values, Context con)
                 throws IOException, InterruptedException {
 
@@ -153,6 +144,9 @@ public class MostCommercializedCommodity {
     }
 
     public static class MapForAverageB extends Mapper<LongWritable, Text, Text, QuantityCommodityWritable> {
+        /*
+        * separa por \t, ou seja tab, padrão do hadoop separar por \t o arquivo intermediário
+        * */
         public void map(LongWritable key, Text value, Context con)
                 throws IOException, InterruptedException {
 
@@ -163,7 +157,7 @@ public class MostCommercializedCommodity {
 
             String commodity = campos[0];
             String flow      = campos[1];
-            double qtd       = Double.parseDouble(campos[2]);
+            double qtd       = Double.parseDouble(campos[2]); // quantidade
 
             // Chave fixa para enviar todos para o mesmo reduce
             QuantityCommodityWritable val = new QuantityCommodityWritable(qtd, commodity);
@@ -179,7 +173,7 @@ public class MostCommercializedCommodity {
             //reduce opera por chave
 
 
-            double max = 0;
+            double max = Double.NEGATIVE_INFINITY;
             String commodity = "";
 
             for (QuantityCommodityWritable t: values) {
@@ -198,9 +192,9 @@ public class MostCommercializedCommodity {
     public static class ReduceForAverageB extends Reducer<Text, QuantityCommodityWritable, Text, QuantityCommodityWritable> {
         public void reduce(Text key, Iterable<QuantityCommodityWritable> values, Context con)
                 throws IOException, InterruptedException {
-
+            // inicializa com o menor valor possível
             double max = 0;
-            String commodity = "";
+            String commodity = "";// commodity vazia para instanciação.
 
             for (QuantityCommodityWritable t: values) {
                 if (t.getQuantity() > max){

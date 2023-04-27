@@ -1,4 +1,4 @@
-package TDE.medium.five;
+package tde_grupo.medium.five;
 
 import org.apache.hadoop.io.WritableComparable;
 
@@ -8,40 +8,40 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class MaxMinMeanWritable implements WritableComparable<MaxMinMeanWritable> {
-    private float max;
-    private float min;
+    private double max;
+    private double min;
 
-    private float mean;
+    private double mean;
 
     public MaxMinMeanWritable() {}
 
-    public MaxMinMeanWritable(float max, float min, float mean) {
+    public MaxMinMeanWritable(double max, double min, double mean) {
         this.max = max;
         this.min = min;
         this.mean = mean;
     }
 
-    public float getMax() {
+    public double getMax() {
         return max;
     }
 
-    public void setMax(float max) {
+    public void setMax(double max) {
         this.max = max;
     }
 
-    public float getMin() {
+    public double getMin() {
         return min;
     }
 
-    public void setMin(float min) {
+    public void setMin(double min) {
         this.min = min;
     }
 
-    public float getMean() {
+    public double getMean() {
         return mean;
     }
 
-    public void setMean(float mean) {
+    public void setMean(double mean) {
         this.mean = mean;
     }
 
@@ -50,7 +50,7 @@ public class MaxMinMeanWritable implements WritableComparable<MaxMinMeanWritable
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MaxMinMeanWritable that = (MaxMinMeanWritable) o;
-        return Float.compare(that.max, max) == 0 && Float.compare(that.min, min) == 0 && Float.compare(that.mean, mean) == 0;
+        return Double.compare(that.max, max) == 0 && Double.compare(that.min, min) == 0 && Double.compare(that.mean, mean) == 0;
     }
 
     @Override
@@ -65,24 +65,23 @@ public class MaxMinMeanWritable implements WritableComparable<MaxMinMeanWritable
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {
-        dataOutput.writeFloat(max);
-        dataOutput.writeFloat(min);
-        dataOutput.writeFloat(mean);
+        dataOutput.writeDouble(max);
+        dataOutput.writeDouble(min);
+        dataOutput.writeDouble(mean);
     }
 
     @Override
     public void readFields(DataInput dataInput) throws IOException {
-        max  = dataInput.readFloat();
-        min  = dataInput.readFloat();
-        mean = dataInput.readFloat();
+        max  = dataInput.readDouble();
+        min  = dataInput.readDouble();
+        mean = dataInput.readDouble();
     }
 
     @Override
     public String toString() {
-        return "MaxMinMeanWritable{" +
+        return
                 "max=" + max +
                 ", min=" + min +
-                ", mean=" + mean +
-                '}';
+                ", mean=" + mean;
     }
 }

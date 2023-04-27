@@ -1,10 +1,9 @@
-package TDE.easy.two;
+package tde_grupo.easy.two;
 
-import advanced.customwritable.FireAvgTempWritable;
-import com.sun.org.apache.regexp.internal.RE;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.FloatWritable;
+
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -115,7 +114,7 @@ public class TransactionsFlowtypeYearCount {
     }
 
     public static class CombineForWordCount extends Reducer<TransactionsFlowtypeYearWritable, IntWritable, TransactionsFlowtypeYearWritable, IntWritable> {
-
+        
         public void reduce(TransactionsFlowtypeYearWritable key, Iterable<IntWritable> values, Context con)
                 throws IOException, InterruptedException {
             int soma = 0;

@@ -1,4 +1,4 @@
-package TDE.hard.six;
+package tde_grupo.hard.six;
 
 import org.apache.hadoop.io.WritableComparable;
 

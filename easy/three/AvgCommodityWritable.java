@@ -1,4 +1,4 @@
-package TDE.easy.three;
+package tde_grupo.easy.three;
 
 import org.apache.hadoop.io.WritableComparable;
 
